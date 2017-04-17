@@ -1,0 +1,29 @@
+<% include _header %>
+
+<p>Harness for module: <b><%= moduleInfo.name %></b></p>
+
+<p>integrations: </p>
+<ul>
+    <% for(var i in moduleInfo.integrations) { %>
+        <li>
+            <%= i %>
+                <% if(moduleInfo.integrations[i].type) { -%><em>(<%= moduleInfo.integrations[i].type %>)</em><% } -%>
+                –
+                <a href="/validate/<%= i %>">validate()</a>
+                <% if(moduleInfo.integrations[i].request) { %>
+                     / <a href="/request/<%= i %>">request()</a>
+                <% } %>
+                <% if(moduleInfo.integrations[i].response) { %>
+                     / <a href="/response/<%= i %>">response()</a>
+                <% } %>
+                <% if(moduleInfo.integrations[i].handle) { %>
+                     / <a href="/handle/<%= i %>">handle()</a>
+                <% } %>
+        </li>
+    <% } %>
+</ul>
+
+<hr/>
+
+</body>
+</html>

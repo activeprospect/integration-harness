@@ -1,0 +1,89 @@
+body {
+    padding: 2em 1em;
+}
+td {
+    padding: .4em 1em;
+}
+.requiredField {
+    color: red;
+}
+.requiredField::after {
+    content: "*"
+}
+#warnings {
+    float: right;
+    border: solid red 2px;
+    color: red;
+}
+.msg {
+    background-color: silver;
+    font-family: "Courier New", Courier, monospace;
+    padding: 0.5em;
+}
+.results {
+    border: solid silver 1px;
+    float: left;
+    margin-right: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding-bottom: 1em;
+    padding-left: 1em;
+    width: 45%;
+}
+
+textarea#response {
+    font-family: "Courier New", Courier, monospace;
+    margin-bottom: 1em;
+}
+.undefined {
+    color: darkgray;
+    font-style: italic;
+    margin-left: 1em;
+}
+
+.matched_ {
+    display: none;
+}
+
+.matched_true {
+    float: right;
+    border: solid green 4px;
+    padding: .5em;
+}
+.matched_true::before {
+    content: "\2713";
+    color: green;
+    font-size: larger;
+}
+
+.matched_false {
+    float: right;
+    border: solid red 4px;
+    padding: .5em;
+}
+.matched_false::before {
+    content: "\2716";
+    color: red;
+    font-size: larger;
+}
+
+.succeeded {
+    color: green;
+    font-weight: bold;
+    font-style: italic;
+}
+.succeeded::before {
+    content: "\2713";
+    color: green;
+    font-size: larger;
+}
+.failed {
+    color: red;
+    font-weight: bold;
+    font-style: italic;
+}
+.failed::before {
+    content: "\2716";
+    color: red;
+    font-size: larger;
+}

@@ -1,0 +1,93 @@
+<% include _header %>
+
+<p><a href="/">module home</a></p>
+
+<h2><%= endpoint.name %> – <code><%= method %>()</code></h2>
+
+<div>
+<% if(fixtures) { -%>
+There are <%= fixtures.length %> fixture(s) available
+    <ul>
+        <% if(!fixtureId) { -%>
+        <li>no fixture <b>&lsaquo;&lsaquo;</b></li>
+        <% } else { -%>
+        <li><a href="/<%= method %>/<%= endpoint.name %>">no fixture</a></li>
+        <% } -%>
+
+        <% for (var i = 0; i < fixtures.length; i++) { -%>
+        <li>
+            <% if(fixtureId && fixtureId == i) { -%>
+            fixture #<%= i %> <b>&lsaquo;&lsaquo;</b>
+            <% } else { -%>
+            <a href="/<%= method %>/<%= endpoint.name %>/<%= i %>">fixture #<%= i %></a>
+            <% } -%>
+        </li>
+        <% } -%>
+    </ul>
+<% } -%>
+</div>
+
+<form action="/<%= method %>/<%= endpoint.name %>/<%= fixtureId %>" method="post">
+    <% if(method === 'request' || method === 'validate') { -%>
+        <table>
+            <tr>
+                <th>name</th>
+                <th>type</th>
+                <th>value</th>
+            </tr>
+            <% for(var param of endpoint.requestVariables()) { -%>
+            <tr>
+                <td><code><%= param.name %></code></td>
+                <td><span class="<%= param.required ? 'requiredField' : '' %>"><%= param.type %></span></td>
+                <td><input type="text" name="<%= param.name %>" value="<%= values[param.name] %>"/>
+                </td>
+            </tr>
+            <% } -%>
+
+            <% if(fixtureId && values.extraVars) { -%>
+                <% for(var param of Object.keys(values.extraVars)) { -%>
+                <tr>
+                    <td><code><%= param %></code></td>
+                    <td> n/a </td>
+                    <td><input type="text" name="<%= param %>" value="<%= values.extraVars[param] %>"/>
+                    </td>
+                </tr>
+                <% } -%>
+            <% } -%>
+        </table>
+
+    <% } else { -%>
+
+        <div>Response object JSON:</div>
+        <textarea id="response" name="response" cols="42" rows="16"><%= JSON.stringify(values, undefined, 2) %></textarea>
+        <br/>
+
+    <% } -%>
+
+    <button type="submit" class="pure-button pure-button-primary">Invoke <%= method %>()</button>
+
+    <br clear="all"/>
+
+    <% if(result) { -%>
+        <div class="results">
+            <div class="matched_<%- result.matchedExpected %>">&nbsp;</div>
+            <p>Actual result:</p>
+            <% if(result.actual) { -%>
+            <pre><%= JSON.stringify(result.actual, undefined, 2) %></pre>
+            <% } else { -%>
+            <span class="undefined">undefined</span>
+            <% } -%>
+        </div>
+
+        <% if(fixtureId) { -%>
+            <div class="results">
+                <p>Expected result:</p>
+                <pre><%= JSON.stringify(result.expected, undefined, 2) %></pre>
+            </div>
+        <% } -%>
+    <% } -%>
+</form>
+
+
+</body>
+</html>
