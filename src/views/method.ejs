@@ -28,7 +28,7 @@ There are <%= fixtures.length %> fixture(s) available
 </div>
 
 <form action="/<%= method %>/<%= endpoint.name %>/<%= fixtureId %>" method="post">
-    <% if(method === 'request' || method === 'validate') { -%>
+    <% if(method === 'request' || method === 'validate' || method === 'handle') { -%>
         <table>
             <tr>
                 <th>name</th>
@@ -48,8 +48,19 @@ There are <%= fixtures.length %> fixture(s) available
                 <% for(var param of Object.keys(values.extraVars)) { -%>
                 <tr>
                     <td><code><%= param %></code></td>
-                    <td> n/a </td>
+                    <td> &mdash; </td>
                     <td><input type="text" name="<%= param %>" value="<%= values.extraVars[param] %>"/>
+                    </td>
+                </tr>
+                <% } -%>
+            <% } -%>
+
+            <% if(fixtureId && values.nockOptions) { -%>
+                <% for(var option of Object.keys(values.nockOptions)) { -%>
+                <tr>
+                    <td><code>nock[<%= option %>]</code></td>
+                    <td> &mdash; </td>
+                    <td><input type="text" size="99" name="nockoptions.<%= option %>" value="<%= JSON.stringify(values.nockOptions[option]) %>"/>
                     </td>
                 </tr>
                 <% } -%>
@@ -58,7 +69,7 @@ There are <%= fixtures.length %> fixture(s) available
 
     <% } else { -%>
 
-        <div>Response object JSON:</div>
+        <div>Response object (JSON):</div>
         <textarea id="response" name="response" cols="42" rows="16"><%= JSON.stringify(values, undefined, 2) %></textarea>
         <br/>
 

@@ -5,7 +5,8 @@ express = require('express')
 bodyParser = require('body-parser')
 lcTypesParser = require('leadconduit-integration').test.types.parser
 helper = require('./helper')
-assert = require('assert')
+nock = require('nock')
+assert = require('chai').assert
 
 
 matchedExpected = (method, actual, expected) ->
@@ -18,11 +19,55 @@ matchedExpected = (method, actual, expected) ->
   matched
 
 
-deleteBlanks = (obj) ->
-  for k, v of obj
-    delete obj[k] if v is ''
+parseVars = (parser, body) ->
 
-  obj
+  deleteBlanks = (obj) ->
+    for k, v of obj
+      delete obj[k] if v is ''
+
+    obj
+
+  vars = flat.unflatten(deleteBlanks(body))
+  vars.lead = {} unless vars.lead? # every vars at least has `.lead`
+
+  parser(vars)
+
+
+getFixture = (fixtures, method, fixtureId) ->
+  return unless fixtures? and method? and fixtureId?
+  fixtures[method]?[fixtureId]
+
+getExtraVars = (integration) ->
+  flat.flatten(integration.fixtures.extra_vars) if integration.fixtures.extra_vars
+
+
+invokeHandle = (handle, vars, options, callback) ->
+
+  return callback(null, { harness_error: 'no nock to catch handle() call' }) unless options?
+
+  options = [options] unless _.isArray(options)
+  nocks = options.map (option) ->
+    nock(option.url)
+      .intercept(option.query, option.verb)
+      .reply(option.statusCode, option.responseData, option.headers)
+
+  handle vars, (err, event) ->
+    event ?= {}
+
+    allNocksMet = nocks.every (aNock) ->
+      if !aNock.isDone()
+        event.nocks_unmet = []
+        event.nocks_unmet.push(Object.keys(aNock.keyedInterceptors)[0])
+
+      aNock.isDone()
+
+    try
+      nock.cleanAll()
+      assert.isTrue allNocksMet
+    catch e
+      event.nocks_total = nocks.length
+
+    callback(err, event)
 
 
 module.exports =
@@ -49,20 +94,20 @@ module.exports =
       response.render('index', {moduleInfo: moduleInfo})
 
 
-    app.get '/handle/:endpoint', (req, res) ->
-      res.status(404).send('Handle support not yet implemented :-(')
-
-
-    app.get [/^\/(validate|request|response)\/(.*)\/(\d+)/, /^\/(validate|request|response)\/([^/]*)/], (req, res) ->
-      method = req.params[0]
-      endpoint = req.params[1]
-      fixtureId = req.params[2] or null
+    # render the user's page with all options
+    app.get [/^\/(validate|request|response|handle)\/(.*)\/(\d+)/, /^\/(validate|request|response|handle)\/([^/]*)/], (req, res) ->
+      method = req.params[0]   # validate, request, etc.
+      endpoint = req.params[1] # query_item, add_item, etc.
+      fixtureId = req.params[2] or null # 0, 1, etc.
 
       integration = helper.getIntegration(moduleInfo.integrations, endpoint, false)
+      fixture = getFixture(integration.fixtures, method, fixtureId)
+      extraVars = getExtraVars(integration)
 
-      if fixtureId and integration.fixtures?[method]?[fixtureId]?
-        values = flat.flatten(integration.fixtures[method][fixtureId].vars) or integration.fixtures[method][fixtureId].res
-        values.extraVars = flat.flatten(integration.fixtures[method][fixtureId].extra_vars) if integration.fixtures[method][fixtureId].extra_vars
+      if fixture?
+        values = fixture.res or flat.flatten(fixture.vars)
+        values.extraVars = extraVars
+        values.nockOptions = fixture.nockOptions
       else if method == 'response'
         values = {}
       else
@@ -71,12 +116,44 @@ module.exports =
       res.render('method', {endpoint: integration, method: method, values: values, fixtures: integration.fixtures?[method], fixtureId: fixtureId, result: false})
 
 
+    # todo: can this pattern be cleaned up here for just `handle`?
+    app.post [/^\/(handle)\/(.*)\/(\d+)/, /^\/(handle)\/([^/]*)/], (req, res) ->
+      method = req.params[0]
+      endpoint = req.params[1]
+      fixtureId = req.params[2] or null
+
+      integration = helper.getIntegration(moduleInfo.integrations, endpoint, false)
+      fixture = getFixture(integration.fixtures, method, fixtureId)
+      extraVars = getExtraVars(integration)
+
+      body = req.body
+      vars = parseVars(lcTypesParser(integration.requestVariables()), body)
+      vars = _.merge(vars, extraVars)
+
+      nockOptions = _.merge(fixture?.nockOptions, vars.nockoptions)
+      if fixture?
+        body.nockOptions = fixture.nockOptions
+        expected = fixture.expected
+
+      body.extraVars = extraVars
+
+      invokeHandle integration[method], vars, nockOptions, (err, actual) ->
+        result =
+          actual: actual
+          expected: expected or null
+          matchedExpected: matchedExpected(method, actual, expected) if fixture?
+
+        res.render('method', {endpoint: integration, method: method, values: body, fixtures: integration.fixtures?[method], fixtureId: fixtureId, result: result })
+
+
     app.post [/^\/(validate|request|response)\/(.*)\/(\d+)/, /^\/(validate|request|response)\/([^/]*)/], (req, res) ->
       method = req.params[0]
       endpoint = req.params[1]
       fixtureId = req.params[2] or null
 
       integration = helper.getIntegration(moduleInfo.integrations, endpoint, false)
+      fixture = getFixture(integration.fixtures, method, fixtureId)
+      extraVars = getExtraVars(integration)
 
       if method is 'response'
         body = JSON.parse(req.body.response)
@@ -84,23 +161,20 @@ module.exports =
           actual = integration[method]({}, {}, body)
         catch err
           actual = err.message
-      else
+
+      else # method is 'validate' or 'request'
         body = req.body
-        bodyObj = flat.unflatten(deleteBlanks(body))
-        bodyObj.lead = {} unless bodyObj.lead? # every vars at least has `.lead`
+        vars = parseVars(lcTypesParser(integration.requestVariables()), body)
+        actual = integration[method](vars)
 
-        parser = lcTypesParser(integration.requestVariables())
-        actual = integration[method](parser bodyObj)
+      expected = fixture.expected if fixture?
 
-      if fixtureId and integration.fixtures?[method]?[fixtureId]?
-        fixture = integration.fixtures?[method][fixtureId]
-        expected = fixture.expected
-        body.extraVars = flat.flatten(fixture.extra_vars) if fixture.extra_vars
+      body.extraVars = extraVars
 
       result =
         actual: actual
-        expected: expected if fixtureId
-        matchedExpected: matchedExpected(method, actual, expected) if fixtureId
+        expected: expected if fixture?
+        matchedExpected: matchedExpected(method, actual, expected) if fixture?
 
       res.render('method', {endpoint: integration, method: method, values: body, fixtures: integration.fixtures?[method], fixtureId: fixtureId, result: result })
 

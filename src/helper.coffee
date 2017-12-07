@@ -1,13 +1,19 @@
 path = require('path')
+fs   = require('fs');
+yaml = require('js-yaml');
 _ = require('lodash')
 types = require('leadconduit-types')
-#defaultFixtures = require(path.join(__dirname, 'tests', 'defaults.json'))
 
-loadFixtures = () ->
+
+loadFixtures = (integrationName) ->
+  fixtures = []
   try
-    fixtures = require(path.join(process.cwd(), 'spec/harness.json'))
-  catch
-    fixtures = []
+    # todo: add support for multiple harness files per integration
+    fixtures = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), "harness/#{integrationName}.yaml"), "utf8"))
+#    fixtures = require(path.join(process.cwd(), "harness/#{integrationName}.json"))
+  catch e
+    if(e.name is 'YAMLException')
+      throw e
 
   fixtures
 
@@ -70,7 +76,7 @@ module.exports =
     integration.responseVariables = integration.response?.variables unless integration.responseVariables
 
     # load integration-local fixture to use in tests
-    integration.fixtures = loadFixtures()
+    integration.fixtures = loadFixtures(name)
 
     requestVarsFunction = integration.request?.variables or integration.requestVariables
 
@@ -103,5 +109,8 @@ module.exports =
         generated: true
       ]
 
-    return integration
+    unless integration.fixtures.handle
+      integration.fixtures.handle = []
 
+
+    return integration
