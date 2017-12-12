@@ -1,6 +1,6 @@
 {
-  "name": "leadconduit-harness",
-  "version": "0.0.0",
+  "name": "lc-harness-alpha",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "directories": {
