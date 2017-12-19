@@ -3,6 +3,7 @@ fs   = require('fs');
 yaml = require('js-yaml');
 _ = require('lodash')
 types = require('leadconduit-types')
+nock = require('nock')
 
 
 loadFixtures = (integrationName) ->
@@ -114,3 +115,32 @@ module.exports =
 
 
     return integration
+
+
+  invokeHandle: (handle, vars, options, callback) ->
+
+    return callback(null, { harness_error: 'no nock to catch handle() call' }) unless options?
+
+    options = [options] unless _.isArray(options)
+    nocks = options.map (option) ->
+      nock(option.url)
+        .intercept(option.query, option.verb)
+        .reply(option.statusCode, option.responseData, option.headers)
+
+    handle vars, (err, event) ->
+      event ?= {}
+
+      allNocksMet = nocks.every (aNock) ->
+        if !aNock.isDone()
+          event.nocks_unmet = []
+          event.nocks_unmet.push(Object.keys(aNock.keyedInterceptors)[0])
+
+        aNock.isDone()
+
+      try
+        nock.cleanAll()
+        assert.isTrue allNocksMet
+      catch e
+        event.nocks_total = nocks.length
+
+      callback(err, event)

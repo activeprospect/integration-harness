@@ -41,35 +41,6 @@ getExtraVars = (integration) ->
   flat.flatten(integration.fixtures.extra_vars) if integration.fixtures.extra_vars
 
 
-invokeHandle = (handle, vars, options, callback) ->
-
-  return callback(null, { harness_error: 'no nock to catch handle() call' }) unless options?
-
-  options = [options] unless _.isArray(options)
-  nocks = options.map (option) ->
-    nock(option.url)
-      .intercept(option.query, option.verb)
-      .reply(option.statusCode, option.responseData, option.headers)
-
-  handle vars, (err, event) ->
-    event ?= {}
-
-    allNocksMet = nocks.every (aNock) ->
-      if !aNock.isDone()
-        event.nocks_unmet = []
-        event.nocks_unmet.push(Object.keys(aNock.keyedInterceptors)[0])
-
-      aNock.isDone()
-
-    try
-      nock.cleanAll()
-      assert.isTrue allNocksMet
-    catch e
-      event.nocks_total = nocks.length
-
-    callback(err, event)
-
-
 module.exports =
 
   run: () ->
@@ -137,7 +108,7 @@ module.exports =
 
       body.extraVars = extraVars
 
-      invokeHandle integration[method], vars, nockOptions, (err, actual) ->
+      helper.invokeHandle integration[method], vars, nockOptions, (err, actual) ->
         result =
           actual: actual
           expected: expected or null
