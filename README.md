@@ -31,6 +31,8 @@ Test fixtures can be written for your integration, which are used by both the co
 
 The first level keys match the core functions of a standard "request/response" integration: `validate()`, `request()`, and `response()`. They are arrays, each element representing one test case, separated by a line with just a dash (`-`). Within each, test inputs and expected outputs are defined, which the harness will use to test each function.
 
+A value for `should` can optionally be included with each case. This is helpful for self-documenting, describing the cases in the UI view, and providing feedback in the command-line output.
+
 As in the integration code itself, the inputs for `validate()` and `request()` are called `vars`, while for `response()` the input - representing a server response, not the `vars` snowball - is instead called `res`. For all three, the expected return data is called `expected`. (If the expectation is that nothing should be returned, as with a call to `validate()` that passes all validation checks, then `expected` should not be defined.)
 
 If extra data is needed for `request()` that isn't available on `vars`, such as API keys or timestamps, those can be set as `extra_vars`.
@@ -62,7 +64,8 @@ request:
 
 response:
 -
-  # found
+  # found [comments, if needed]
+  should: parse JSON body
   res:
     headers:
       Content-Type: application/json

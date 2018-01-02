@@ -17,9 +17,9 @@ There are <%= fixtures.length %> fixture(s) available
         <% for (var i = 0; i < fixtures.length; i++) { -%>
         <li>
             <% if(fixtureId && fixtureId == i) { -%>
-            fixture #<%= i %> <b>&lsaquo;&lsaquo;</b>
+            fixture #<%= i %> <b>&lsaquo;&lsaquo;</b> (<%= fixtures[i].should %>)
             <% } else { -%>
-            <a href="/<%= method %>/<%= endpoint.name %>/<%= i %>">fixture #<%= i %></a>
+            <a href="/<%= method %>/<%= endpoint.name %>/<%= i %>">fixture #<%= i %></a> &nbsp;&nbsp; (<%= fixtures[i].should %>)
             <% } -%>
         </li>
         <% } -%>

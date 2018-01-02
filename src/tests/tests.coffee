@@ -61,7 +61,8 @@ for i of @integrations
           for fixture in fixtures
             vars = fixture.vars
             vars.lead = {} unless vars.lead? # there's always a `lead` on `vars`
-            assert.equal integration.validate(parser(fixture.vars)), fixture.expected
+            message = if fixture.should then "should #{fixture.should}" else ''
+            assert.equal integration.validate(parser(fixture.vars)), fixture.expected, message
 
 
       describe 'Request variables', ->
@@ -155,7 +156,7 @@ for i of @integrations
             fixtures = integration.fixtures['request']
             for fixture in fixtures
               vars = _.merge(fixture.vars, integration.fixtures.extra_vars)
-              assertFixtureMatch integration.request(parser(vars)), fixture.expected
+              assertFixtureMatch integration.request(parser(vars)), fixture.expected, fixture.should
 
 
       describe 'Response function', ->
@@ -164,7 +165,7 @@ for i of @integrations
           if integration.response
             fixtures = integration.fixtures['response']
             for fixture in fixtures
-              assertFixtureMatch integration.response({}, {}, fixture.res), fixture.expected
+              assertFixtureMatch integration.response({}, {}, fixture.res), fixture.expected, fixture.should
 
 
       describe 'Handle function', ->
@@ -172,7 +173,7 @@ for i of @integrations
         if integration.handle
           integration.fixtures['handle'].forEach (fixture) ->
 
-            it "should correctly handle #{fixture.description}", (done) ->
+            it "should #{fixture.should}", (done) ->
               vars = _.merge(fixture.vars, integration.fixtures.extra_vars)
               helper.invokeHandle integration.handle, vars, fixture.nockOptions, (err, event) ->
                 console.error(err) if err
@@ -181,13 +182,14 @@ for i of @integrations
                 done()
 
 
-assertFixtureMatch = (actual, expected) ->
+assertFixtureMatch = (actual, expected, message = '') ->
+  message = "should #{message}" if message
   if _.isRegExp(expected)
-    assert.match actual, expected
+    assert.match actual, expected, message
   else if _.isObject(expected)
-    assert.deepEqual actual, expected
+    assert.deepEqual actual, expected, message
   else if _.isString(expected)
-    assert.equal actual, expected
+    assert.equal actual, expected, message
   else
     assert.fail(null, null, '"expected" in fixture should be a RegExp, Object, or String')
 
