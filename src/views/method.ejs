@@ -17,9 +17,9 @@ There are <%= fixtures.length %> fixture(s) available
         <% for (var i = 0; i < fixtures.length; i++) { -%>
         <li>
             <% if(fixtureId && fixtureId == i) { -%>
-            fixture #<%= i %> <b>&lsaquo;&lsaquo;</b> (<%= fixtures[i].should %>)
+            fixture #<%= i %> <b>&lsaquo;&lsaquo;</b> <% if(fixtures[i].should) { -%> (<%= fixtures[i].should %>) <% } -%>
             <% } else { -%>
-            <a href="/<%= method %>/<%= endpoint.name %>/<%= i %>">fixture #<%= i %></a> &nbsp;&nbsp; (<%= fixtures[i].should %>)
+            <a href="/<%= method %>/<%= endpoint.name %>/<%= i %>">fixture #<%= i %></a> &nbsp;&nbsp;  <% if(fixtures[i].should) { -%> (<%= fixtures[i].should %>) <% } -%>
             <% } -%>
         </li>
         <% } -%>
@@ -69,11 +69,32 @@ There are <%= fixtures.length %> fixture(s) available
 
     <% } else { -%>
 
-        <div>Response object (JSON):</div>
-        <textarea id="response" name="response" cols="42" rows="16"><%= JSON.stringify(values, undefined, 2) %></textarea>
-        <br/>
+        <table>
+            <tr>
+                <th>name</th>
+                <th>value</th>
+            </tr>
+            <tr>
+                <td><code>status</code></td> <td><input type="text" name="status" value="<%= values.status %>"/></td>
+            </tr>
 
-    <% } -%>
+            <% if(values.headers) { -%>
+            <tr>
+                <% for(var header of Object.keys(values.headers)) { -%>
+                    <td><code><%= header %> header</code></td> <td><input type="text" name="header[<%= header %>]" value="<%= values.headers[header] %>"/>
+                <% } -%>
+            </tr>
+            <% } -%>
+
+            <tr>
+                <td><code>body</code></td>
+                <td>
+                    <textarea id="body" name="body" cols="42" rows="16"><%= values.body %></textarea>
+                </td>
+            </tr>
+        </table>
+
+        <% } -%>
 
     <button type="submit" class="pure-button pure-button-primary">Invoke <%= method %>()</button>
 

@@ -80,7 +80,13 @@ module.exports =
         values.extraVars = extraVars
         values.nockOptions = fixture.nockOptions
       else if method == 'response'
-        values = {}
+        # basic JSON template
+        values =
+          status: 200
+          headers:
+            "Content-Type": "application/json"
+          body: "{  \"sample\": true }"
+
       else
         values = req
 
@@ -127,27 +133,31 @@ module.exports =
       extraVars = getExtraVars(integration)
 
       if method is 'response'
-        body = JSON.parse(req.body.response)
+        response =
+          status: req.body.status
+          headers: req.body.header
+          body: req.body.body
+
         try
-          actual = integration[method]({}, {}, body)
+          actual = integration[method]({}, {}, response)
         catch err
           actual = err.message
 
       else # method is 'validate' or 'request'
-        body = req.body
-        vars = parseVars(lcTypesParser(integration.requestVariables()), body)
+        response = req.body
+        vars = parseVars(lcTypesParser(integration.requestVariables()), response)
         actual = integration[method](vars)
 
       expected = fixture.expected if fixture?
 
-      body.extraVars = extraVars
+      response.extraVars = extraVars
 
       result =
         actual: actual
         expected: expected if fixture?
         matchedExpected: matchedExpected(method, actual, expected) if fixture?
 
-      res.render('method', {endpoint: integration, method: method, values: body, fixtures: integration.fixtures?[method], fixtureId: fixtureId, result: result })
+      res.render('method', {endpoint: integration, method: method, values: response, fixtures: integration.fixtures?[method], fixtureId: fixtureId, result: result })
 
 
     app.listen 3000, () ->

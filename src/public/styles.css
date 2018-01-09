@@ -3,6 +3,7 @@ body {
 }
 td {
     padding: .4em 1em;
+    vertical-align: top;
 }
 .requiredField {
     color: red;
@@ -31,7 +32,7 @@ td {
     width: 45%;
 }
 
-textarea#response {
+textarea#body {
     font-family: "Courier New", Courier, monospace;
     margin-bottom: 1em;
 }
