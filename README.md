@@ -1,6 +1,14 @@
 
 # leadconduit-harness
-LeadConduit integration run/test utility
+
+A LeadConduit integration run/test utility
+
+This integration harness can be used in several ways:
+
+1. Run the command-line version that performs a stock suite of basic module format tests out of the box
+2. Run a simple web UI to interact with an integration's functions (`validate()`, `request()`, `response()`, and `handle()`)
+3. Extend the basic tests by writing harness fixtures specific to an integration. These are plain data files, written in YAML, which are available to both the command-line and the web UI.
+4. _Coming "soon":_ Launch a sandboxed version of an integration's UI
 
 ## Installation
 
@@ -12,7 +20,9 @@ Until published on npm, install like this:
 
 After that, you should be able to run the utility `harness` in another directory (e.g., an integration repo directory).
 
-- _todo: document how harness.json overrides work_
+- _todo: update documentation for npm installation_
+- _todo: document how to get integration code to test_
+- _todo: document how harness.yaml overrides work_
 
 ## Command-line
 
