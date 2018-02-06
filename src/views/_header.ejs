@@ -6,5 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" media="all" href="/styles.css" />
+    <link rel="stylesheet" href="https://d35x2co4ayvx2v.cloudfront.net/build/2.0.8-0.1517524356913/css/index.css">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript">
+      function initialize() {
+        $('#initButton').prop('disabled', true);
+        var message = {
+          type: 'init',
+          data: {entity: {id: 'entity-id', name: 'This Here Integration'}}
+        };
+
+        $('#integrationFrame').prop("contentWindow").postMessage(message, '*');
+      }
+
+      window.addEventListener('message', function (event) {
+
+        if (event.origin === 'http://har.test') {
+          var output = $('#output');
+          output.html(JSON.stringify(event.data.data, null, 2));
+          output.toggleClass('highlight');
+
+          var numMsgs = $('#numMsgs');
+          numMsgs.html(Number.parseInt(numMsgs.html()) + 1);
+        }
+      });
+    </script>
 </head>
 <body>

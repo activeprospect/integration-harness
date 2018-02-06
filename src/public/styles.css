@@ -33,6 +33,7 @@ td {
 }
 
 textarea#body {
+    background-color: white;
     font-family: "Courier New", Courier, monospace;
     margin-bottom: 1em;
 }
@@ -87,4 +88,7 @@ textarea#body {
     content: "\2716";
     color: red;
     font-size: larger;
+}
+.highlight {
+    background-color: lightyellow;
 }

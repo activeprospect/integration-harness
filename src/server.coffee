@@ -7,6 +7,7 @@ lcTypesParser = require('leadconduit-integration').test.types.parser
 helper = require('./helper')
 nock = require('nock')
 assert = require('chai').assert
+ui = require(path.join(process.cwd(), './lib/ui'))
 
 
 matchedExpected = (method, actual, expected) ->
@@ -57,6 +58,8 @@ module.exports =
     app.set('view engine', 'ejs')
 
     app.use(bodyParser.urlencoded({ extended: true }))
+    console.log(ui);
+    app.use('/ui', ui)
 
     moduleInfo.integrations = helper.getIntegrations(loaded)
 
