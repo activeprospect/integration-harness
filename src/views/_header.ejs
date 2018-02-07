@@ -14,7 +14,7 @@
         $('#initButton').prop('disabled', true);
         var message = {
           type: 'init',
-          data: {entity: {id: 'entity-id', name: 'This Here Integration'}}
+          data: {entity: {id: '<%= moduleInfo.id %>', name: '<%= moduleInfo.name %>'}}
         };
 
         $('#integrationFrame').prop("contentWindow").postMessage(message, '*');
@@ -22,13 +22,16 @@
 
       window.addEventListener('message', function (event) {
 
-        if (event.origin === 'http://har.test') {
+        if (event.origin === 'http://localhost:3000') {
           var output = $('#output');
           output.html(JSON.stringify(event.data.data, null, 2));
           output.toggleClass('highlight');
 
           var numMsgs = $('#numMsgs');
           numMsgs.html(Number.parseInt(numMsgs.html()) + 1);
+        }
+        else {
+          console.log("ignoring data from " + event.origin + ":", event.data);
         }
       });
     </script>

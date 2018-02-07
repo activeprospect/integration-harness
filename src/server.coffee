@@ -7,7 +7,11 @@ lcTypesParser = require('leadconduit-integration').test.types.parser
 helper = require('./helper')
 nock = require('nock')
 assert = require('chai').assert
-ui = require(path.join(process.cwd(), './lib/ui'))
+
+try
+  ui = require(path.join(process.cwd(), './lib/ui'))
+catch e
+  console.log("no rich UI found");
 
 
 matchedExpected = (method, actual, expected) ->
@@ -45,10 +49,11 @@ getExtraVars = (integration) ->
 module.exports =
 
   run: () ->
-    moduleInfo =
-      name: path.basename(process.cwd())
-
     loaded = helper.loadModule()
+
+    moduleInfo =
+      name: loaded.name or path.basename(process.cwd())
+      hasUI: ui?
 
     app = express()
 
@@ -58,8 +63,7 @@ module.exports =
     app.set('view engine', 'ejs')
 
     app.use(bodyParser.urlencoded({ extended: true }))
-    console.log(ui);
-    app.use('/ui', ui)
+    app.use('/ui', ui) if ui
 
     moduleInfo.integrations = helper.getIntegrations(loaded)
 
@@ -93,7 +97,7 @@ module.exports =
       else
         values = req
 
-      res.render('method', {endpoint: integration, method: method, values: values, fixtures: integration.fixtures?[method], fixtureId: fixtureId, result: false})
+      res.render('method', {moduleInfo: moduleInfo, endpoint: integration, method: method, values: values, fixtures: integration.fixtures?[method], fixtureId: fixtureId, result: false})
 
 
     # todo: can this pattern be cleaned up here for just `handle`?
@@ -123,7 +127,7 @@ module.exports =
           expected: expected or null
           matchedExpected: matchedExpected(method, actual, expected) if fixture?
 
-        res.render('method', {endpoint: integration, method: method, values: body, fixtures: integration.fixtures?[method], fixtureId: fixtureId, result: result })
+        res.render('method', {moduleInfo: moduleInfo, endpoint: integration, method: method, values: body, fixtures: integration.fixtures?[method], fixtureId: fixtureId, result: result })
 
 
     app.post [/^\/(validate|request|response)\/(.*)\/(\d+)/, /^\/(validate|request|response)\/([^/]*)/], (req, res) ->
@@ -160,7 +164,7 @@ module.exports =
         expected: expected if fixture?
         matchedExpected: matchedExpected(method, actual, expected) if fixture?
 
-      res.render('method', {endpoint: integration, method: method, values: response, fixtures: integration.fixtures?[method], fixtureId: fixtureId, result: result })
+      res.render('method', {moduleInfo: moduleInfo, endpoint: integration, method: method, values: response, fixtures: integration.fixtures?[method], fixtureId: fixtureId, result: result })
 
 
     app.listen 3000, () ->
