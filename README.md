@@ -6,31 +6,37 @@ A LeadConduit integration run/test utility
 This integration harness can be used in several ways:
 
 1. Run the command-line version that performs a stock suite of basic module format tests out of the box
-2. Run a simple web UI to interact with an integration's functions (`validate()`, `request()`, `response()`, and `handle()`)
+2. Run a simple web UI to interact with an integration's functions (`validate()`, `request()`, `response()`, and `handle()`) and "rich UI"
 3. Extend the basic tests by writing harness fixtures specific to an integration. These are plain data files, written in YAML, which are available to both the command-line and the web UI.
-4. _Coming "soon":_ Launch a sandboxed version of an integration's UI
 
 ## Installation
 
-Until published on npm, install like this:
+Run `npm -g install leadconduit-integration-harness`.
 
- 1. clone this repo
- 2. run `grunt` (you may need to install the grunt command-line interface first, e.g.: `sudo npm install -g grunt-cli`)
- 3. run `npm link`
+Now, for it to be of any use, you'll need a LeadConduit integration module. Depending on your use case, you can either clone a repo from Github, or install the module from NPM. In the former case, you'll need to be sure to run `npm install` after you clone or update the repo.
 
-After that, you should be able to run the utility `harness` in another directory (e.g., an integration repo directory).
+### Github example
 
-- _todo: update documentation for npm installation_
-- _todo: document how to get integration code to test_
-- _todo: document how harness.yaml overrides work_
+1. `git clone git@github.com:activeprospect/leadconduit-integration-trustedform.git`
+2. `cd leadconduit-integration-trustedform/`
+3. `npm install`
+4. `harness` (or, `harness --server`, see below)
+
+
+### NPM example
+
+1. `npm install leadconduit-trustedform`
+2. `cd node_modules/leadconduit-trustedform/`
+3. `harness` (or, `harness --server`, see below)
+
 
 ## Command-line
 
-Once installed, you can execute a baseline set of sanity-check tests by running `harness` in the directory where your integration is checked out. This suite of basic tests should all be green & passing out of the box. It also can (and should) be customized with integration-specific checks via YAML fixtures, described below.
+Once installed, you can execute a baseline set of sanity-check tests by running `harness` in the directory where your integration is checked out. This suite of basic tests should all be green & passing out of the box. It also can be customized with integration-specific checks via YAML fixtures, described below.
 
 ## Web UI
 
-Tests can also be run interactively, via a web UI. From the directory where the integration is checked out, run `harness --server` to start up the server, and visit [http://localhost:3000](http://localhost:3000). You will be presented with links to access the various aspects of the integration module.
+Tests can also be run interactively, via a web UI. From the directory where the integration is checked out, run `harness --server` to start up the server, then visit [http://localhost:3000](http://localhost:3000). You'll be presented with links to access the various aspects of the integration module: run methods like `validate()`, `request()`, and `response()`, or launch the module's UI, if applicable.
 
 ## Fixtures
 
@@ -123,7 +129,7 @@ extra_vars:
 
 ### YAML Syntax Tips
 
-- body strings (e.g., JSON):
+- multiline body strings (e.g., JSON) can be written in a nice, readable way like this:
 
 ```
 body: >
@@ -140,6 +146,7 @@ body: |-
   {"email":"test@activeprospect.com","state":"TX"}
 ```
 
-## Gotchas
+## Tips
 
 - The harness loads code from `lib`, so if you're working with an old CoffeeScript integration, don't forget to re-run `cake build` whenever you change the code, and before running `harness`.
+- If you're working on a UI, enable automatic [webpack](https://webpack.js.org/) re-compilation by deleting `lib/ui/public/dist/index.js` (either manually or via `npm run-script postpublish`).

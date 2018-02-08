@@ -12,9 +12,12 @@
     <script type="text/javascript">
       function initialize() {
         $('#initButton').prop('disabled', true);
+        $('#richUiModal').toggle();
         var message = {
           type: 'init',
-          data: {entity: {id: '<%= moduleInfo.id %>', name: '<%= moduleInfo.name %>'}}
+          data: {
+            entity: {id: '<%= moduleInfo.id %>', name: '<%= moduleInfo.name %>'}
+          }
         };
 
         $('#integrationFrame').prop("contentWindow").postMessage(message, '*');
@@ -29,6 +32,11 @@
 
           var numMsgs = $('#numMsgs');
           numMsgs.html(Number.parseInt(numMsgs.html()) + 1);
+
+          if(event.data.data.event === "cancel") {
+            $('#richUiModal').toggle();
+            $('#initButton').prop('disabled', false);
+          }
         }
         else {
           console.log("ignoring data from " + event.origin + ":", event.data);
@@ -36,4 +44,4 @@
       });
     </script>
 </head>
-<body>
+<body class="harness">
