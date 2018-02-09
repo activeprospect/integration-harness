@@ -92,3 +92,9 @@ textarea#body, textarea#output {
 .highlight {
     background-color: lightyellow;
 }
+div#richUiModal {
+    display: none;
+    float: right;
+    margin-right: 3em;
+    width: 700px;
+}

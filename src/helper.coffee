@@ -11,7 +11,6 @@ loadFixtures = (integrationName) ->
   try
     # todo: add support for multiple harness files per integration
     fixtures = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), "harness/#{integrationName}.yaml"), "utf8"))
-#    fixtures = require(path.join(process.cwd(), "harness/#{integrationName}.json"))
   catch e
     if(e.name is 'YAMLException')
       throw e

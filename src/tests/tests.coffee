@@ -81,8 +81,8 @@ for i of @integrations
 
           @variables().forEach (variable) ->
             assert.isDefined variable.name
-            assert.isDefined variable.type, "type is defined on '#{variable.name}'"
-            assert.isDefined variable.required, "required is defined on '#{variable.name}'"
+            assert.isDefined variable.type, "'type' is not defined on '#{variable.name}'"
+            assert.isDefined variable.required, "'required' is not defined on '#{variable.name}'"
 
 
         it 'should have valid values for name', ->
