@@ -61,9 +61,13 @@ validate:
   vars:
     list_names: cranberries
     value: delores@cranberries.com
+  envVariables:
+    - AN_EXTERNAL_API_KEY
 -
   vars:
     list_names: cranberries
+  envVariables:
+    - AN_EXTERNAL_API_KEY
   expected: values must not be blank
 
 request:

@@ -10,6 +10,15 @@ types.names.push 'wildcard'
 
 thisModule = helper.loadModule()
 
+addEnvVars = (varNames = []) ->
+  varNames.forEach (varName) ->
+    process.env[varName] = 'dummy.value'
+
+removeEnvVars = (varNames = []) ->
+  varNames.forEach (varName) ->
+    delete process.env[varName]
+
+
 @integrations = helper.getIntegrations thisModule
 
 describe 'Harness initialization', ->
@@ -49,20 +58,34 @@ for i of @integrations
 
       describe 'Validate function', ->
 
+        it 'should throw if it has undefined envVariables', ->
+          if integration.envVariables.length > 0
+            invoke = ->
+              integration.validate(lead: {})
+            assert.throws(invoke, 'Missing credentials, contact ActiveProspect Support')
+
+
         it 'should return a string', ->
+          # make dummy envVariables, if needed
+          addEnvVars integration.envVariables
+
           msg = integration.validate(lead: {})
           assert.equal typeof msg, 'string'
           assert.isTrue msg.length > 0
+
+          removeEnvVars integration.envVariables
 
 
         it 'should correctly handle test fixtures', ->
           fixtures = integration.fixtures['validate']
           parser = lcTypesParser(integration.requestVariables())
           for fixture in fixtures
+            addEnvVars fixture.envVariables
             vars = fixture.vars
             vars.lead = {} unless vars.lead? # there's always a `lead` on `vars`
             message = if fixture.should then "should #{fixture.should}" else ''
             assert.equal integration.validate(parser(fixture.vars)), fixture.expected, message
+            removeEnvVars fixture.envVariables
 
 
       describe 'Request variables', ->

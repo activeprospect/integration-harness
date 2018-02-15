@@ -46,6 +46,16 @@ getExtraVars = (integration) ->
   flat.flatten(integration.fixtures.extra_vars) if integration.fixtures.extra_vars
 
 
+setupEnv = (body) ->
+  envVars = flat.unflatten(body).env
+  body.env ?= {}
+  for k, v of envVars
+    if v.length
+      process.env[k] = v
+      body.env[k] = v
+    else
+      delete process.env[k]
+
 module.exports =
 
   run: () ->
@@ -86,6 +96,10 @@ module.exports =
         values = fixture.res or flat.flatten(fixture.vars)
         values.extraVars = extraVars
         values.nockOptions = fixture.nockOptions
+        values.env ?= {}
+        fixture.envVariables.forEach (varName) ->
+          values.env[varName] = 'dummy.value'
+
       else if method == 'response'
         # basic JSON template
         values =
@@ -96,6 +110,7 @@ module.exports =
 
       else
         values = req
+        values.env ?= {}
 
       res.render('method', {moduleInfo: moduleInfo, endpoint: integration, method: method, values: values, fixtures: integration.fixtures?[method], fixtureId: fixtureId, result: false})
 
@@ -152,8 +167,12 @@ module.exports =
 
       else # method is 'validate' or 'request'
         response = req.body
+        setupEnv(response)
         vars = parseVars(lcTypesParser(integration.requestVariables()), response)
-        actual = integration[method](vars)
+        try
+          actual = integration[method](vars)
+        catch err
+          actual = err.message
 
       expected = fixture.expected if fixture?
 

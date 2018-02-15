@@ -44,6 +44,15 @@ There are <%= fixtures.length %> fixture(s) available
             </tr>
             <% } -%>
 
+            <% for(var envVar of endpoint.envVariables) { -%>
+            <tr>
+                <td>environment variable:<br/><code><%= envVar %></code></td>
+                <td><span class="requiredField">string</span></td>
+                <td><input type="text" name="env.<%= envVar %>" value="<%= values.env[envVar] %>"/>
+                </td>
+            </tr>
+            <% } -%>
+
             <% if(fixtureId && values.extraVars) { -%>
                 <% for(var param of Object.keys(values.extraVars)) { -%>
                 <tr>

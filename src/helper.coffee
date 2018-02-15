@@ -74,6 +74,7 @@ module.exports =
 
     integration.requestVariables = integration.request?.variables unless integration.requestVariables
     integration.responseVariables = integration.response?.variables unless integration.responseVariables
+    integration.envVariables ?= []
 
     # load integration-local fixture to use in tests
     integration.fixtures = loadFixtures(name)
