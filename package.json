@@ -1,14 +1,13 @@
 {
   "name": "leadconduit-harness",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "index.js",
   "bin": {
     "harness": "./index.js"
   },
   "scripts": {
-    "test": "cake test",
-    "prepublish": "grunt"
+    "test": "npm test"
   },
   "author": "",
   "license": "CC-BY-NC-ND-4.0",
@@ -17,6 +16,7 @@
     "chai": ">= 1.9.0",
     "ejs": "^2.5.5",
     "express": "^4.14.1",
+    "express-session": "^1.15.6",
     "flat": "^2.0.1",
     "js-yaml": "^3.9.1",
     "leadconduit-integration": "^0.4.1",
@@ -25,13 +25,5 @@
     "mocha": ">= 1.17.0",
     "nock": "^9.0.14"
   },
-  "devDependencies": {
-    "coffee-script": ">= 1.7.0",
-    "grunt": "^0.4.0",
-    "grunt-run": "latest",
-    "grunt-contrib-coffee": "^1.0.0",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "leadconduit-cakefile": "^0.1.1"
-  }
+  "devDependencies": {}
 }

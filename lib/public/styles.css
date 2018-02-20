@@ -12,10 +12,13 @@ td {
 .requiredField::after {
     content: "*"
 }
-#warnings {
-    float: right;
-    border: solid red 2px;
+.warning {
+    background-color: #Fdd;
     color: red;
+    font-weight: bold;
+    margin: 1em 0;
+    padding: 1em;
+    text-align: center;
 }
 .msg {
     background-color: silver;

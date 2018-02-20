@@ -34,6 +34,26 @@ Now, for it to be of any use, you'll need a LeadConduit integration module. Depe
 
 Once installed, you can execute a baseline set of sanity-check tests by running `harness` in the directory where your integration is checked out. This suite of basic tests should all be green & passing out of the box. It also can be customized with integration-specific checks via YAML fixtures, described below.
 
+### baseline test suite
+
+When no fixture definitions are found (see below), the harness will apply a suite of baseline tests with the bare minimum mock data structures.
+
+When these tests fail, it may be due to a problem or a violation of standards. Or, it may mean that the skeletal data structure used for testing isn't close enough to what the integration expects.
+
+For example, the data used to test a basic `response()` function (in a request/response-style integration) is:
+
+```json
+{
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "status": 200,
+  "body": "{}"
+}
+```
+
+If the integration being tested assumes it will always get a JSON _array_ with a 200 response, for example, this will result in a failed test or two. To address this, you can either code the `response()` function more defensively, or add integration-specific fixtures with more correct data (or both).
+
 ## Web UI
 
 Tests can also be run interactively, via a web UI. From the directory where the integration is checked out, run `harness --server` to start up the server, then visit [http://localhost:3000](http://localhost:3000). You'll be presented with links to access the various aspects of the integration module: run methods like `validate()`, `request()`, and `response()`, or launch the module's UI, if applicable.
