@@ -11,7 +11,7 @@ This integration harness can be used in several ways:
 
 ## Installation
 
-Run `npm -g install leadconduit-integration-harness`.
+Run `npm -g install leadconduit-harness`.
 
 Now, for it to be of any use, you'll need a LeadConduit integration module. Depending on your use case, you can either clone a repo from Github, or install the module from NPM. In the former case, you'll need to be sure to run `npm install` after you clone or update the repo.
 
