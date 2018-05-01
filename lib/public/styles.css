@@ -35,7 +35,24 @@ td {
     padding-left: 1em;
     width: 45%;
 }
-
+#moduleInfo {
+    border: solid silver 1px;
+    float: right;
+    width: 30%;
+}
+#moduleInfo header {
+    border-bottom: solid silver 1px;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    text-align: center;
+}
+#moduleInfo p {
+    padding: 0 1em;
+}
+#moduleInfo #icon {
+    float: right;
+    padding-right: 4px;
+}
 textarea#body, textarea#output {
     font-family: "Courier New", Courier, monospace;
     margin-bottom: 1em;
