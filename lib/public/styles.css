@@ -19,6 +19,7 @@ td {
     margin: 1em 0;
     padding: 1em;
     text-align: center;
+    width: 68%;
 }
 .msg {
     background-color: silver;
