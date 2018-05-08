@@ -7,7 +7,7 @@
     "harness": "./index.js"
   },
   "scripts": {
-    "test": "npm test"
+    "test": "mocha"
   },
   "author": "",
   "license": "CC-BY-NC-ND-4.0",
@@ -27,5 +27,7 @@
     "mocha": ">= 1.17.0",
     "nock": "^9.0.14"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "supertest": "^3.0.0"
+  }
 }
