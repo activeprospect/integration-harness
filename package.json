@@ -25,7 +25,8 @@
     "lodash": "^4.17.4",
     "markdown-it": "^8.4.1",
     "mocha": ">= 1.17.0",
-    "nock": "^9.0.14"
+    "nock": "^9.0.14",
+    "yargs": "^11.0.0"
   },
   "devDependencies": {
     "supertest": "^3.0.0"
