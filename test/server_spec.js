@@ -4,7 +4,7 @@ describe('harness server', function () {
   let server;
   beforeEach(function () {
     delete require.cache[require.resolve('../lib/server')]; // force full restart for each test
-    server = require('../lib/server');
+    server = require('../lib/server')();
   });
 
   afterEach(function (done) {
@@ -17,7 +17,7 @@ describe('harness server', function () {
       .expect(200, done);
   });
 
-  it('404 everything else', function(done) {
+  it('404s bad URLs', function(done) {
     request(server)
       .get('/foo/bar')
       .expect(404, done);
