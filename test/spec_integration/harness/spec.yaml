@@ -1,0 +1,64 @@
+validate:
+-
+  should: pass
+  vars:
+    lead:
+      phone_1: '5125551212'
+  envVariables:
+    - SPEC_ENV_VAR
+-
+  should: fail when missing 'phone_1'
+  vars:
+    phone_1: 1232
+  envVariables:
+    - SPEC_ENV_VAR
+  expected: A valid phone number is required
+
+request:
+-
+  should: correctly formulate the request
+  vars:
+    lead:
+      phone_1: '5125551212'
+  envVariables:
+    - SPEC_ENV_VAR
+  expected:
+    headers:
+      Accept: application/json
+      Authorization: "key: dummy.value"
+    method: POST
+    url: https://activeprospect.com/leadconduit/
+    body: Telefonnummer=5125551212
+
+response:
+-
+  should: parse JSON body for success
+  res:
+    headers:
+      Content-Type: application/json
+      X-Runtime: 16
+    status: 200
+    body: >
+      {
+        "status": "good"
+      }
+  expected:
+    spec:
+      outcome: success
+      billable: 1
+-
+  should: parse JSON body for failure
+  res:
+    headers:
+      Content-Type: application/json
+      X-Runtime: 16
+    status: 200
+    body: >
+      {
+        "status": "bad"
+      }
+  expected:
+    spec:
+      outcome: failure
+      reason: something bad happened
+      billable: 1

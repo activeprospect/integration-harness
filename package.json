@@ -7,7 +7,7 @@
     "harness": "./index.js"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha && cd test/spec_integration && harness"
   },
   "author": "",
   "license": "CC-BY-NC-ND-4.0",
