@@ -56,7 +56,7 @@ If the integration being tested assumes it will always get a JSON _array_ with a
 
 ## Web UI
 
-Tests can also be run interactively, via a web UI. From the directory where the integration is checked out, run `harness --server` to start up the server, then visit [http://localhost:3000](http://localhost:3000). You'll be presented with links to access the various aspects of the integration module: run methods like `validate()`, `request()`, and `response()`, or launch the module's UI, if applicable.
+Tests can also be run interactively, via a web UI. From the directory where the integration is checked out, run `harness --server` to start up the server, then visit [http://localhost:3033](http://localhost:3033) (you can change that port by specifiying a value with `--port`). You'll be presented with links to access the various aspects of the integration module: run methods like `validate()`, `request()`, and `response()`, or launch the module's UI, if applicable.
 
 If the integration's rich UI isn't styled as it would be in the app, a quick-and-dirty hack is to add this line to the `<head>` tag of the integration's `/lib/ui/public/index.html`. Just remember to remove it before committing or publishing!
 
