@@ -7,7 +7,7 @@
     "harness": "./index.js"
   },
   "scripts": {
-    "test": "mocha && cd test/spec_integration && harness"
+    "test": "mocha && cd test/spec_integration && node ../../index.js"
   },
   "author": "Chris Grayson <chris@activeprospect.com>",
   "license": "CC-BY-NC-ND-4.0",

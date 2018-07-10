@@ -21,7 +21,7 @@ curl -o $CSS_DIR/$NEW_CSS_FILE $URL
 if [ $? -eq 0 ]
 then
 	echo -n "downloaded "
-	ls $NEW_CSS_FILE
+	ls $CSS_DIR/$NEW_CSS_FILE
 
 	# prompt to remove old versions
 	for f in $CSS_DIR/lc-client.*.css
