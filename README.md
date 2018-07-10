@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/activeprospect/integration-harness.svg?branch=master)](https://travis-ci.org/activeprospect/integration-harness)
 
 # integration-harness
 
