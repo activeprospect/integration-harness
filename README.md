@@ -6,7 +6,7 @@ A LeadConduit integration run/test utility
 This integration harness can be used in several ways:
 
 1. Run the command-line version that performs a stock suite of basic module format tests out of the box
-2. Run a simple web UI to interact with an integration's functions (`validate()`, `request()`, `response()`, and `handle()`) and "rich UI"
+2. Run a simple web UI to interact with an integration's functions (`validate()`, `request()`, and `response()`) and launch the integration UI
 3. Extend the basic tests by writing harness fixtures specific to an integration. These are plain data files, written in YAML, which are available to both the command-line and the web UI.
 
 ## Installation
@@ -56,7 +56,7 @@ If the integration being tested assumes it will always get a JSON _array_ with a
 
 ## Web UI
 
-Tests can also be run interactively, via a web UI. From the directory where the integration is checked out, run `harness --server` to start up the server, then visit [http://localhost:3033](http://localhost:3033) (you can change that port by specifiying a value with `--port`). You'll be presented with links to access the various aspects of the integration module: run methods like `validate()`, `request()`, and `response()`, or launch the module's UI, if applicable.
+Tests can also be run interactively, via a web UI. From the directory where the integration is checked out, run `harness --server` to start up the server, then visit [http://localhost:3033](http://localhost:3033) (or the port number specified with `--port`). You'll be presented with links to access the various aspects of the integration module: run methods like `validate()`, `request()`, and `response()`, or launch the module's UI, if applicable.
 
 If the integration's rich UI isn't styled as it would be in the app, a quick-and-dirty hack is to add this line to the `<head>` tag of the integration's `/lib/ui/public/index.html`. Just remember to remove it before committing or publishing!
 
@@ -73,13 +73,13 @@ Test fixtures can be written for your integration, which are used by both the co
 
 The first level keys match the core functions of a standard "request/response" integration: `validate()`, `request()`, and `response()`. They are arrays, each element representing one test case, separated by a line with just a dash (`-`). Within each, test inputs and expected outputs are defined, which the harness will use to test each function.
 
-A value for `should` can optionally be included with each case. This is helpful for self-documenting, describing the cases in the UI view, and providing feedback in the command-line output.
+A `should` value for each case is optional but highly recommended. They're helpful for self-documenting, describing the cases in the UI view, and providing feedback in the command-line output.
 
 As in the integration code itself, the inputs for `validate()` and `request()` are called `vars`, while for `response()` the input - representing a server response, not the `vars` snowball - is instead called `res`. For all three, the expected return data is called `expected`. (If the expectation is that nothing should be returned, as with a call to `validate()` that passes all validation checks, then `expected` should not be defined.)
 
 If extra data is needed for `request()` that isn't available on `vars`, such as API keys or timestamps, those can be set as `extra_vars`.
 
-Example:
+### Example YAML fixture
 
 ```yaml
 validate:
@@ -155,11 +155,11 @@ extra_vars:
     api_key: foo
 ```
 
-- _future:_ option to run only baseline tests even when fixtures are present
-
 ### YAML Syntax Tips
 
-- multiline body strings (e.g., JSON) can be written in a nice, readable way like this:
+#### Multiline body strings
+
+Useful for including data (e.g., JSON) in a nice, readable way.
 
 ```
 body: >
@@ -169,14 +169,16 @@ body: >
   }
 ```
 
-- an alternate string syntax, that will "chomp" newlines (e.g., if a test's comparision is failing because of a trailing `\n`):
+#### An alternate string syntax that "chomps" newlines
+
+Use this YAML syntax, for example, if a test's comparision is failing because of a trailing `\n`.
 
 ```
 body: |-
   {"email":"test@activeprospect.com","state":"TX"}
 ```
 
-## Tips
+## General Tips
 
 - The harness loads code from `lib`, so if you're working with an old CoffeeScript integration, don't forget to re-run `cake build` whenever you change the code, and before running `harness`.
 - If you're working on a UI, enable automatic [webpack](https://webpack.js.org/) re-compilation by deleting `lib/ui/public/dist/index.js` (either manually or via `npm run-script postpublish`).
