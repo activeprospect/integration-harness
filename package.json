@@ -1,7 +1,7 @@
 {
-  "name": "leadconduit-harness",
-  "version": "0.0.11",
-  "description": "",
+  "name": "integration-harness",
+  "version": "0.0.20",
+  "description": "A LeadConduit integration run/test utility",
   "main": "index.js",
   "bin": {
     "harness": "./index.js"
@@ -9,7 +9,7 @@
   "scripts": {
     "test": "mocha && cd test/spec_integration && harness"
   },
-  "author": "",
+  "author": "Chris Grayson <chris@activeprospect.com>",
   "license": "CC-BY-NC-ND-4.0",
   "dependencies": {
     "body-parser": "^1.17.2",
