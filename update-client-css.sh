@@ -29,7 +29,7 @@ then
 		if [ "$f" != "$CSS_DIR/$NEW_CSS_FILE" ]
 		then
 			rm -i "$f"
-			if [ ! -f "$CSS_DIR/$NEW_CSS_FILE" ]
+			if [ ! -f "$f" ]
 			then
 				git rm "$f"
 			fi
@@ -38,6 +38,7 @@ then
 
 	# symlink new version
 	ln -sf $NEW_CSS_FILE $CSS_DIR/lc-client.css
+	git add $NEW_CSS_FILE $CSS_DIR/lc-client.css
 fi
 
 ls -lF $CSS_DIR/lc-client*.css
