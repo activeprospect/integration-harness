@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "A LeadConduit integration run/test utility",
   "main": "index.js",
+  "repository": "https://github.com/activeprospect/integration-harness",
   "bin": {
     "harness": "./index.js"
   },
