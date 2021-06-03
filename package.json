@@ -1,6 +1,6 @@
 {
   "name": "integration-harness",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A LeadConduit integration run/test utility",
   "main": "index.js",
   "repository": "https://github.com/activeprospect/integration-harness",
