@@ -11,7 +11,8 @@ fi
 VERSION=$1
 
 CSS_DIR=lib/public
-NEW_CSS_PATH=$CSS_DIR/lc-client.$VERSION.css
+NEW_CSS_FILE=lc-client.$VERSION.css
+NEW_CSS_PATH=$CSS_DIR/$NEW_CSS_FILE
 
 URL="https://d35x2co4ayvx2v.cloudfront.net/build/${VERSION}/css/index.css"
 curl -s -o ${NEW_CSS_PATH}.gz $URL
@@ -24,18 +25,19 @@ then
 
 	gunzip -v ${NEW_CSS_PATH}.gz
 
-	# prompt to remove old versions
+	# remove old versions
 	for f in $CSS_DIR/lc-client.[0-9]*.css
 	do
-	  echo "processing $f..."
 		if [ "$f" != "$NEW_CSS_PATH" ]
 		then
-			rm -v "$f"
+			git rm "$f"
 		fi
 	done
 
 	# symlink new version
-	ln -sf $NEW_CSS_PATH $CSS_DIR/lc-client.css
+	cd $CSS_DIR
+	ln -sf $NEW_CSS_FILE lc-client.css
+	cd -
 	git add $NEW_CSS_PATH $CSS_DIR/lc-client.css
 fi
 
