@@ -14,4 +14,4 @@ jobs:
     with:
       version: ${{ github.event.inputs.version }}
     secrets:
-      NPM_PUBLISH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      NPM_PUBLISH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
