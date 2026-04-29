@@ -7,33 +7,11 @@ on:
         description: "version | patch | minor | major"
         required: true
         default: "patch"
+
 jobs:
   publish:
-    environment: release
-    runs-on: ubuntu-latest
-    name: 'Bump version and publish'
-    env:
-      VERSION: ${{ github.event.inputs.version }}
-      NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-      - name: Install Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
-        with:
-          node-version: 18
-      - name: Install packages
-        run: npm install
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
-      - name: version and publish
-        run: |
-          git stash
-          git config user.name $GITHUB_ACTOR
-          git config user.email gh-actions-${GITHUB_ACTOR}@github.com
-          git remote add gh-origin https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          npm version $VERSION -m "Version %s"
-          npm publish
-          git push gh-origin $GITHUB_REF --tags
+    uses: activeprospect/github-action-workflows/.github/workflows/release.yml@master
+    with:
+      version: ${{ github.event.inputs.version }}
+    secrets:
+      NPM_PUBLISH_TOKEN: ${{ secrets.NPM_TOKEN }}
