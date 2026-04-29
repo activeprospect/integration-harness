@@ -1,0 +1,13 @@
+name: Node.js CI
+
+on: push
+
+jobs:
+  test:
+    uses: activeprospect/github-action-workflows/.github/workflows/test.yml@master
+    with:
+      install_command: npm ci
+      codecov: true
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
