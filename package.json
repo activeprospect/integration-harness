@@ -27,7 +27,7 @@
     "yargs": "^11.0.0"
   },
   "devDependencies": {
-    "@activeprospect/integration-dev-dependencies": "^1.1.5",
+    "@activeprospect/integration-dev-dependencies": "^2.1.0",
     "supertest": "^3.0.0"
   }
 }
