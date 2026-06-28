@@ -19,7 +19,7 @@
     "express-session": "^1.15.6",
     "flat": "^2.0.1",
     "front-matter": "^2.3.0",
-    "js-yaml": "^3.9.1",
+    "js-yaml": "^4.2.0",
     "leadconduit-integration": "^0.4.1",
     "leadconduit-types": "^4.14.0",
     "lodash": "^4.17.4",
